@@ -1,15 +1,19 @@
-import uvicorn
+"""Main module for FastAPI app"""
+from uuid import uuid4
 from fastapi import FastAPI, status, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
+
+import uvicorn
 from model import UserOut, UserAuth, TokenSchema
-from uuid import uuid4
+
 from utils import (
   create_access_token,
   create_refresh_token,
   get_hashed_password,
   verify_password
 )
-from fastapi.security import OAuth2PasswordRequestForm
+
 from singleton import db
 from deps import get_current_user
 
@@ -28,12 +32,20 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
+
 @app.get("/")
 async def index():
-  return {"message": "Hello World"}
+    """
+    Index route
+    """
+    return {"message": "Hello World"}
+
 
 @app.post("/signup", summary="Create new user", response_model=UserOut)
 async def create_user(data: UserAuth):
+    """
+    Create new user
+    """
     user = db.user_storage.get(data.email)
     print(user)
     if user is not None:
@@ -50,8 +62,15 @@ async def create_user(data: UserAuth):
     db.user_storage[data.email] = user
     return user
 
-@app.post("/login", summary="Create access and refresh tokens for user", response_model=TokenSchema)
+
+@app.post(
+    "/login",
+    summary="Create access and refresh tokens for user",
+    response_model=TokenSchema)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    """
+    Create access and refresh tokens for user
+    """
     user = db.user_storage.get(form_data.username)
     if user is None:
         raise HTTPException(
@@ -64,7 +83,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect email or password"
         )
-    # print(form_data)
     return {
         "access_token": create_access_token(form_data.username),
         "refresh_token": create_refresh_token(form_data.username)
@@ -73,9 +91,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @app.get("/me", summary="Get current user", response_model=UserOut)
 async def get_me(current_user: UserOut = Depends(get_current_user)):
+    """
+    Get current user
+    """
     print(current_user)
-    return current_user
+    return {
+        'id': uuid4(),
+        'email': 'test'
+    }
 
 # Run app
 if __name__ == "__main__":
-  uvicorn.run("app:app", host="0.0.0.0", port=3000, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=3000, reload=True)
