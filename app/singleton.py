@@ -1,7 +1,14 @@
+"""
+Singleton pattern
+"""
 import random
-from model import UserAuth, UserOut
+from model import UserAuth
+
 
 def singleton(class_):
+    """
+    Singleton decorator
+    """
     instances = {}
 
     def get_instance(*args, **kwargs):
@@ -14,10 +21,14 @@ def singleton(class_):
 
 @singleton
 class Database:
+    """
+    Database class
+    """
     def __init__(self):
         self.id = random.randint(0, 10000)
         self.user_storage: dict[str, UserAuth] = {}
         print(f"Instance ID: {self.id}")
+
 
 db = Database()
 

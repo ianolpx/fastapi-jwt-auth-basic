@@ -16,18 +16,26 @@ reuseable_oauth = OAuth2PasswordBearer(
     scheme_name="JWT"
 )
 
-async def get_current_user(token: str = Depends(reuseable_oauth)) -> SystemUser:
+
+async def get_current_user(token: str = Depends(reuseable_oauth)):
     try:
+        print('token', token)
         payload = jwt.decode(
             token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
         )
         token_data = TokenPayload(**payload)
-        print(token_data)
+        print('token_data', token_data)
 
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = db.user_storage.get(token_data.sub)
-    return SystemUser(**user)
+    print('sub', token_data.sub)
+    # user = db.user_storage.get(token_data.sub)
+    # user = db.user_storage[token_data.sub]
+    return {'user': token_data.sub,
+    'type': 'test',
+    'loc': 'test',
+    'msg': 'test'}
+    # return SystemUser(**user)
