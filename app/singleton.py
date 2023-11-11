@@ -31,8 +31,3 @@ class Database:
 
 
 db = Database()
-
-if __name__ == "__main__":
-    db = Database()
-    # db.user_storage["test"] = User(email="test", age=20)
-    # print(db.user_storage)
