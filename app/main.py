@@ -94,7 +94,6 @@ async def get_me(current_user: UserOut = Depends(get_current_user)):
     """
     Get current user
     """
-    print(current_user)
     return {
         'id': uuid4(),
         'email': 'test'
@@ -102,4 +101,4 @@ async def get_me(current_user: UserOut = Depends(get_current_user)):
 
 # Run app
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=3000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=3000, reload=True)

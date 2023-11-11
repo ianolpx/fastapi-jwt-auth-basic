@@ -5,14 +5,6 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 
-class User(BaseModel):
-    """
-    User schema
-    """
-    email: str
-    age: int = None
-
-
 class TokenSchema(BaseModel):
     """
     Token schema
@@ -44,10 +36,3 @@ class UserOut(BaseModel):
     """
     id: UUID
     email: str
-
-
-class SystemUser(UserOut):
-    """
-    System user schema
-    """
-    password: str
